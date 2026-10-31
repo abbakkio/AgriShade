@@ -4,6 +4,23 @@ AgriShade is an end-to-end precision agriculture and foliar disease diagnostic p
 
 ---
 
+## 📱 Live iOS Mobile Demonstration
+
+<div align="center">
+  <a href="docs/assets/agrishade_ios_demo.mp4">
+    <img src="docs/assets/agrishade_ios_demo.gif" width="360" alt="AgriShade iOS Native App Demonstration" style="border-radius: 20px; box-shadow: 0px 8px 24px rgba(0,0,0,0.3);" />
+  </a>
+  <p align="center">
+    <b>Real-time foliar pathology inference on Apple iPhone</b><br/>
+    <i>100% on-device Core ML execution (Apple Neural Engine), Cell 6 4-Panel Diagnostic HUD, Shannon Entropy Fail-Safe Safety Lock, and Agronomic Prescription Advisory.</i>
+  </p>
+  <p align="center">
+    <a href="docs/assets/agrishade_ios_demo.mp4"><strong>▶️ Play / Download High-Definition Demo Video (.mp4 • 60 FPS • 2.0 MB)</strong></a>
+  </p>
+</div>
+
+---
+
 ## 🌟 System Architecture
 
 ```
@@ -71,6 +88,11 @@ AgriShade is an end-to-end precision agriculture and foliar disease diagnostic p
 │
 ├── security/
 │   └── test_sql_injection.py         # Security & SQL injection vulnerability suite
+│
+├── docs/
+│   ├── assets/                       # Demo media (H.264 MP4 demo & preview GIF)
+│   ├── submission_package/           # ICT Assignment 4 competition deliverables
+│   └── RESEARCH_IMPROVEMENTS.md      # Agronomic & algorithmic enhancement roadmaps
 │
 ├── docker-compose.yml                # Multi-service container orchestration
 ├── AgriShade.ipynb                   # Model training, Grad-CAM, & Cell 6 pipeline

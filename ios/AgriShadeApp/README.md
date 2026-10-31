@@ -4,6 +4,23 @@ An on-device foliar pathology diagnostic application for iPhone, implementing th
 
 ---
 
+## 📱 Live iOS Mobile Demonstration
+
+<div align="center">
+  <a href="../../docs/assets/agrishade_ios_demo.mp4">
+    <img src="../../docs/assets/agrishade_ios_demo.gif" width="340" alt="AgriShade iOS Native App Demonstration" style="border-radius: 20px; box-shadow: 0px 8px 24px rgba(0,0,0,0.3);" />
+  </a>
+  <p align="center">
+    <b>Real-time foliar pathology inference on Apple iPhone</b><br/>
+    <i>Cell 6 4-Panel HUD Diagnostic Dashboard, Softmax confidence estimation, differential hypotheses, and Fail-Safe Lock.</i>
+  </p>
+  <p align="center">
+    <a href="../../docs/assets/agrishade_ios_demo.mp4"><strong>▶️ Play / Download High-Definition Demo Video (.mp4 • 60 FPS • 2.0 MB)</strong></a>
+  </p>
+</div>
+
+---
+
 ## 🌟 Key Features
 
 1. **100% On-Device Core ML (`AgriShadeNet.mlpackage` / `AgriShadeNet.mlmodelc`)**:
