@@ -6,7 +6,7 @@ public struct DiagnosticReportCard: View {
 
     public var body: some View {
         VStack(spacing: 16) {
-            // Rejection Banner if NOT a leaf
+            // SCENARIO 1: Non-Leaf Object Detected
             if report.isNonLeafObject {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 8) {
@@ -35,7 +35,39 @@ public struct DiagnosticReportCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.red.opacity(0.12))
                 .cornerRadius(14)
-            } else {
+            }
+            // SCENARIO 2: Unsupported Ornamental / Non-Target Plant (Fixes Spider Plant / Ficus bug)
+            else if report.isUnsupportedSpecies {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "questionmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.orange)
+                        Text("Unsupported Botanical Species")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.orange)
+                    }
+
+                    Text("This specimen does not match any of the 14 supported agricultural crop families. It appears to be an ornamental houseplant or wild flora.")
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("• Supported Crops: Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, Tomato.")
+                        Text("• For houseplants (e.g. Spider Plant, Ficus, Peace Lily), consult botanical extension services.")
+                        Text("• Chemical pesticide advice has been safely suppressed.")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.orange.opacity(0.12))
+                .cornerRadius(14)
+            }
+            // SCENARIO 3: Supported Agricultural Crop Detected
+            else {
                 // Header Diagnosis Badge
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -71,6 +103,25 @@ public struct DiagnosticReportCard: View {
                     .background(confidenceColor.opacity(0.12))
                     .cornerRadius(10)
                 }
+
+                // Dual Metrology: Crop Match vs Pathology Certainty
+                HStack(spacing: 12) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "leaf.circle.fill")
+                            .foregroundColor(.green)
+                        Text("Host Crop: \(report.cropMatch.cropName)")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                    }
+                    Spacer()
+                    Text("Species Match: \(report.cropMatch.percentageString)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
 
                 Divider()
 

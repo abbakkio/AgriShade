@@ -18,9 +18,17 @@ public struct PathologyCandidate: Identifiable, Sendable {
     public let percentageString: String
 }
 
+public struct CropMatchInfo: Sendable {
+    public let cropName: String
+    public let marginalProbability: Double // Sum of probabilities for this crop
+    public let percentageString: String
+    public let isSupportedCrop: Bool
+}
+
 public struct PathologyReport: Sendable {
     public let topCandidate: PathologyCandidate
     public let candidates: [PathologyCandidate] // Top 3
+    public let cropMatch: CropMatchInfo
     public let dominantTaxon: String
     public let dominantCrop: String
     public let confidenceMargin: Double // Δp1 - p2 in %
@@ -29,21 +37,31 @@ public struct PathologyReport: Sendable {
     public let cropConflict: Bool
     public let isGated: Bool // True if fail-safe lock engaged or non-leaf
     public let isNonLeafObject: Bool // Explicitly true if no foliar tissue was detected
+    public let isUnsupportedSpecies: Bool // True if specimen is ornamental/unsupported plant
     public let gatingReasons: [String]
     public let advisory: AgronomicAdvisory
     public let timestamp: Date
 }
 
 public enum BotanicalTaxonomy {
+    public static let supportedCrops: Set<String> = [
+        "Apple", "Blueberry", "Cherry (including sour)", "Corn (maize)",
+        "Grape", "Orange", "Peach", "Pepper, bell", "Potato",
+        "Raspberry", "Soybean", "Squash", "Strawberry", "Tomato"
+    ]
+
     public static let cropFamilies: [String: String] = [
         "Apple": "Rosaceae (Malus)",
         "Blueberry": "Ericaceae (Vaccinium)",
         "Cherry_(including_sour)": "Rosaceae (Prunus)",
+        "Cherry (including sour)": "Rosaceae (Prunus)",
         "Corn_(maize)": "Poaceae (Zea mays)",
+        "Corn (maize)": "Poaceae (Zea mays)",
         "Grape": "Vitaceae (Vitis)",
         "Orange": "Rutaceae (Citrus)",
         "Peach": "Rosaceae (Prunus persica)",
         "Pepper,_bell": "Solanaceae (Capsicum)",
+        "Pepper, bell": "Solanaceae (Capsicum)",
         "Potato": "Solanaceae (Solanum tuberosum)",
         "Raspberry": "Rosaceae (Rubus)",
         "Soybean": "Fabaceae (Glycine max)",

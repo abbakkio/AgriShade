@@ -60,7 +60,6 @@ public final class FoliarDiagnosticService: ObservableObject {
         }
 
         do {
-            // AgriShadeNetInput convenience initializer takes CGImage and automatically resizes & normalizes to 224x224 CVPixelBuffer
             let input = try AgriShadeNetInput(input_leafWith: cg)
             let output = try net.prediction(input: input)
 
@@ -72,7 +71,7 @@ public final class FoliarDiagnosticService: ObservableObject {
                 return
             }
 
-            // Ensure probabilities are normalized
+            // Normalization
             var normalizedProbs: [String: Double] = [:]
             let sumRaw = rawProbs.values.reduce(0.0, +)
             let maxRaw = rawProbs.values.max() ?? 0.0
@@ -91,6 +90,20 @@ public final class FoliarDiagnosticService: ObservableObject {
                     normalizedProbs[k] = expSum > 0 ? (ev / expSum) : 0.0
                 }
             }
+
+            // STAGE 1: Hierarchical Marginal Crop Probability Aggregation (Priority 1 & 2)
+            var cropMarginals: [String: Double] = [:]
+            for (lbl, prob) in normalizedProbs {
+                let crop = lbl.components(separatedBy: "___").first ?? lbl
+                let cleanCrop = crop.replacingOccurrences(of: "_", with: " ")
+                cropMarginals[cleanCrop, default: 0.0] += prob
+            }
+
+            let sortedCrops = cropMarginals.sorted(by: { $0.value > $1.value })
+            let topCropName = sortedCrops.first?.key ?? "Unknown"
+            let topCropProb = sortedCrops.first?.value ?? 0.0
+            let secondCropProb = sortedCrops.count > 1 ? sortedCrops[1].value : 0.0
+            let cropMargin = (topCropProb - secondCropProb) * 100.0
 
             // Sort candidates descending
             let sorted = normalizedProbs.sorted(by: { $0.value > $1.value })
@@ -119,7 +132,7 @@ public final class FoliarDiagnosticService: ObservableObject {
             let top2Conf = candidates.count > 1 ? candidates[1].probability * 100.0 : 0.0
             let confidenceMargin = top1Conf - top2Conf
 
-            // Shannon Entropy (in nats) matching AgriShade Cell 6
+            // Shannon Entropy (in nats)
             var entropy: Double = 0.0
             for (_, p) in normalizedProbs {
                 if p > 1e-12 {
@@ -134,6 +147,10 @@ public final class FoliarDiagnosticService: ObservableObject {
             let rawCrop = top1.rawLabel.components(separatedBy: "___").first ?? top1.cropName
             let dominantTaxon = BotanicalTaxonomy.taxon(for: rawCrop)
 
+            // Botanical Gatekeeping: If top crop marginal probability is low (<62%) or crop margin is narrow (<15%)
+            // or crop genus conflict occurs across top-3, classify as Unsupported Ornamental / Unknown Species
+            let isUnsupportedSpecies = (topCropProb < 0.62) || (cropMargin < 15.0) || cropConflict
+
             // Decision Gating Thresholds matching AgriShade Cell 6
             let CONFIDENCE_THRESHOLD = 65.0
             let ENTROPY_THRESHOLD = 1.75
@@ -141,10 +158,13 @@ public final class FoliarDiagnosticService: ObservableObject {
 
             var gatingReasons: [String] = []
 
-            // If foliar check failed (user took photo of desk, person, floor, etc.)
             let isNonLeaf = !foliarCheck.isFoliageDetected
             if isNonLeaf, let reason = foliarCheck.rejectionReason {
                 gatingReasons.append(reason)
+            }
+
+            if isUnsupportedSpecies && !isNonLeaf {
+                gatingReasons.append("Unsupported Botanical Species: Leaf morphology indicates an ornamental or non-crop species (e.g. Spider Plant, Ficus, or non-target flora). AgriShade supports 14 agricultural crops.")
             }
 
             if top1Conf < CONFIDENCE_THRESHOLD {
@@ -160,12 +180,20 @@ public final class FoliarDiagnosticService: ObservableObject {
                 gatingReasons.append("Genera conflict: candidates span unrelated crop families (\(top3Crops.joined(separator: ", "))).")
             }
 
-            let isGated = !gatingReasons.isEmpty || isNonLeaf
+            let isGated = !gatingReasons.isEmpty || isNonLeaf || isUnsupportedSpecies
             let advisory = AdvisoryDatabase.advisory(for: top1.rawLabel)
+
+            let cropMatchInfo = CropMatchInfo(
+                cropName: topCropName,
+                marginalProbability: topCropProb,
+                percentageString: String(format: "%.1f%%", topCropProb * 100.0),
+                isSupportedCrop: !isUnsupportedSpecies
+            )
 
             self.currentReport = PathologyReport(
                 topCandidate: top1,
                 candidates: Array(candidates.prefix(3)),
+                cropMatch: cropMatchInfo,
                 dominantTaxon: dominantTaxon,
                 dominantCrop: top1.cropName,
                 confidenceMargin: confidenceMargin,
@@ -174,6 +202,7 @@ public final class FoliarDiagnosticService: ObservableObject {
                 cropConflict: cropConflict,
                 isGated: isGated,
                 isNonLeafObject: isNonLeaf,
+                isUnsupportedSpecies: isUnsupportedSpecies,
                 gatingReasons: gatingReasons,
                 advisory: advisory,
                 timestamp: Date()
