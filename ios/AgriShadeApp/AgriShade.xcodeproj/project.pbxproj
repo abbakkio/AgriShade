@@ -1,0 +1,335 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		110001 /* AgriShadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210001 /* AgriShadeApp.swift */; };
+		110002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210002 /* ContentView.swift */; };
+		110003 /* PathologyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210003 /* PathologyModel.swift */; };
+		110004 /* FoliarDiagnosticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210004 /* FoliarDiagnosticService.swift */; };
+		110005 /* ImagePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210005 /* ImagePickerSheet.swift */; };
+		110006 /* DiagnosticReportCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210006 /* DiagnosticReportCard.swift */; };
+		110007 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 210007 /* Assets.xcassets */; };
+		110008 /* AgriShadeNet.mlpackage in Resources */ = {isa = PBXBuildFile; fileRef = 210008 /* AgriShadeNet.mlpackage */; };
+		110009 /* AgriShadeNet.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = 210009 /* AgriShadeNet.mlmodelc */; };
+		110010 /* Cell6DiagnosticPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210011 /* Cell6DiagnosticPipeline.swift */; };
+		110011 /* Cell6DiagnosticDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210012 /* Cell6DiagnosticDashboard.swift */; };
+		110012 /* FoliarValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210013 /* FoliarValidator.swift */; };
+		110013 /* AgriShadeNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210014 /* AgriShadeNet.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		000001 /* AgriShade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgriShade.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		210001 /* AgriShadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgriShadeApp.swift; sourceTree = "<group>"; };
+		210002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		210003 /* PathologyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathologyModel.swift; sourceTree = "<group>"; };
+		210004 /* FoliarDiagnosticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoliarDiagnosticService.swift; sourceTree = "<group>"; };
+		210005 /* ImagePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerSheet.swift; sourceTree = "<group>"; };
+		210006 /* DiagnosticReportCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticReportCard.swift; sourceTree = "<group>"; };
+		210007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		210008 /* AgriShadeNet.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AgriShadeNet.mlpackage; sourceTree = "<group>"; };
+		210009 /* AgriShadeNet.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AgriShadeNet.mlmodelc; sourceTree = "<group>"; };
+		210010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		210011 /* Cell6DiagnosticPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell6DiagnosticPipeline.swift; sourceTree = "<group>"; };
+		210012 /* Cell6DiagnosticDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell6DiagnosticDashboard.swift; sourceTree = "<group>"; };
+		210013 /* FoliarValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoliarValidator.swift; sourceTree = "<group>"; };
+		210014 /* AgriShadeNet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgriShadeNet.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		310001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		410001 = {
+			isa = PBXGroup;
+			children = (
+				410002 /* AgriShadeApp */,
+				410003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		410002 /* AgriShadeApp */ = {
+			isa = PBXGroup;
+			children = (
+				210001 /* AgriShadeApp.swift */,
+				210014 /* AgriShadeNet.swift */,
+				410004 /* Models */,
+				410005 /* Views */,
+				410006 /* Services */,
+				210008 /* AgriShadeNet.mlpackage */,
+				210009 /* AgriShadeNet.mlmodelc */,
+				210007 /* Assets.xcassets */,
+				210010 /* Info.plist */,
+			);
+			path = AgriShadeApp;
+			sourceTree = "<group>";
+		};
+		410003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				000001 /* AgriShade.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		410004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				210003 /* PathologyModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		410005 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				210002 /* ContentView.swift */,
+				210005 /* ImagePickerSheet.swift */,
+				210006 /* DiagnosticReportCard.swift */,
+				210012 /* Cell6DiagnosticDashboard.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		410006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				210004 /* FoliarDiagnosticService.swift */,
+				210011 /* Cell6DiagnosticPipeline.swift */,
+				210013 /* FoliarValidator.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		510001 /* AgriShade */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 610001 /* Build configuration list for PBXNativeTarget "AgriShade" */;
+			buildPhases = (
+				310002 /* Sources */,
+				310001 /* Frameworks */,
+				310003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AgriShade;
+			productName = AgriShade;
+			productReference = 000001 /* AgriShade.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		710001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					510001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 610002 /* Build configuration list for PBXProject "AgriShade" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 410001;
+			productRefGroup = 410003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				510001 /* AgriShade */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		310003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				110007 /* Assets.xcassets in Resources */,
+				110008 /* AgriShadeNet.mlpackage in Resources */,
+				110009 /* AgriShadeNet.mlmodelc in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		310002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				110001 /* AgriShadeApp.swift in Sources */,
+				110002 /* ContentView.swift in Sources */,
+				110003 /* PathologyModel.swift in Sources */,
+				110004 /* FoliarDiagnosticService.swift in Sources */,
+				110005 /* ImagePickerSheet.swift in Sources */,
+				110006 /* DiagnosticReportCard.swift in Sources */,
+				110010 /* Cell6DiagnosticPipeline.swift in Sources */,
+				110011 /* Cell6DiagnosticDashboard.swift in Sources */,
+				110012 /* FoliarValidator.swift in Sources */,
+				110013 /* AgriShadeNet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		810001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		810002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		810003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 29AGVVMLDG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AgriShadeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agrishade.pathology;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		810004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 29AGVVMLDG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AgriShadeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agrishade.pathology;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		610001 /* Build configuration list for PBXNativeTarget "AgriShade" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				810003 /* Debug */,
+				810004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		610002 /* Build configuration list for PBXProject "AgriShade" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				810001 /* Debug */,
+				810002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 710001 /* Project object */;
+}
