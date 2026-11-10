@@ -12,7 +12,6 @@ import TerranCompanyFootage from "@/components/TerranCompanyFootage";
 import TerranBlog from "@/components/TerranBlog";
 import TerranPreFooter from "@/components/TerranPreFooter";
 import TerranFooter from "@/components/TerranFooter";
-import AuthModal from "@/components/AuthModal";
 import ScannerModalDemo from "@/components/ScannerModalDemo";
 
 export default function Home() {
@@ -54,9 +53,6 @@ export default function Home() {
 
       {/* Footer with Iconic Geometric Art Box */}
       <TerranFooter />
-
-      {/* Auth Modal (Login / Register) */}
-      <AuthModal />
 
       {/* Interactive In-Field Scanner HUD Demo Modal */}
       <ScannerModalDemo

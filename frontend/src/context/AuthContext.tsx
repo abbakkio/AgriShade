@@ -75,31 +75,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const session: UserSession = {
           username: data.user.username,
           full_name: data.user.full_name || username,
-          role: data.user.role || "Agronomist",
+          email: data.user.email,
+          role: data.user.role || "agronomist",
           farm_id: data.user.farm_id || 1,
           token: data.access_token,
         };
         setUser(session);
         localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-        return { success: true, message: "Logged in successfully to Central Farm Telemetry!" };
+        return { success: true, message: `Добро пожаловать, ${session.full_name}!` };
       } else {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Invalid credentials.");
+        return { success: false, message: err.detail || "Неверный логин или пароль." };
       }
-    } catch {
-      // Offline fallback simulation mode for field/eval demonstration
-      const fallbackSession: UserSession = {
-        username,
-        full_name: username.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        role: "Lead Agronomist",
-        farm_id: 1,
-        token: `demo_tok_${Date.now()}`,
-      };
-      setUser(fallbackSession);
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(fallbackSession));
+    } catch (e: any) {
+      console.warn("Cloud login failed", e);
       return {
-        success: true,
-        message: "Signed in via Local Field Mode (Offline SQLite Buffer Enabled)",
+        success: false,
+        message: "Не удалось подключиться к серверу Render. Проверьте интернет или статус сервера.",
       };
     }
   };
@@ -120,37 +112,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (res.ok) {
-        const newUser = await res.json();
-        const session: UserSession = {
-          username: newUser.username,
-          full_name: newUser.full_name,
-          email: newUser.email,
-          role: newUser.role,
-          farm_id: newUser.farm_id,
-          token: newUser.api_token || `tok_${Date.now()}`,
-        };
-        setUser(session);
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-        return { success: true, message: "Account created and authorized successfully!" };
+        // Automatically log in with the new credentials
+        return await login(payload.username, payload.password);
       } else {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Registration failed.");
+        return { success: false, message: err.detail || "Не удалось создать аккаунт." };
       }
-    } catch {
-      // Offline fallback simulation mode
-      const fallbackSession: UserSession = {
-        username: payload.username,
-        full_name: payload.full_name,
-        email: payload.email,
-        role: payload.role,
-        farm_id: payload.farm_id,
-        token: `demo_tok_${Date.now()}`,
-      };
-      setUser(fallbackSession);
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(fallbackSession));
+    } catch (e: any) {
+      console.warn("Cloud registration error", e);
       return {
-        success: true,
-        message: "Account registered via Local Field Mode (Edge Buffer Active)",
+        success: false,
+        message: "Ошибка подключения к серверу. Попробуйте снова.",
       };
     }
   };

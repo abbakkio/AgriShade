@@ -25,6 +25,11 @@ import {
   ShieldAlert,
   ShieldCheck,
   AlertCircle,
+  User,
+  LogIn,
+  LogOut,
+  Building,
+  CheckCircle2,
 } from "lucide-react";
 
 // ============================================================================
@@ -43,6 +48,8 @@ export interface FarmerPlotRecord {
   treated: boolean;
   leafImage: string;
   farmerNote: string;
+  deviceId?: number;
+  isMyFarm?: boolean;
 }
 
 const INITIAL_FARMER_RECORDS: FarmerPlotRecord[] = [
@@ -133,7 +140,7 @@ const INITIAL_FARMER_RECORDS: FarmerPlotRecord[] = [
 ];
 
 export default function MinimalFarmerDashboard() {
-  const { user } = useAuth();
+  const { user, openAuthModal, logout, login } = useAuth();
 
   // Notion Layout & UI State
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -141,11 +148,30 @@ export default function MinimalFarmerDashboard() {
   const [records, setRecords] = useState<FarmerPlotRecord[]>(INITIAL_FARMER_RECORDS);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "needs_action" | "treated" | "healthy">("all");
+  const [onlyMyFarm, setOnlyMyFarm] = useState(false);
   const [activeRecord, setActiveRecord] = useState<FarmerPlotRecord | null>(null);
 
   // Live Cloud Backend Connection
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://agrishade.onrender.com";
   const [loadingScans, setLoadingScans] = useState(false);
+  const [farmInfo, setFarmInfo] = useState<any>(null);
+  const [loadingFarm, setLoadingFarm] = useState(false);
+
+  // Fetch farm summary whenever user or farm_id changes
+  useEffect(() => {
+    if (user?.farm_id) {
+      setLoadingFarm(true);
+      fetch(`${API_BASE}/api/v1/farms/${user.farm_id}/summary`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setFarmInfo(data);
+        })
+        .catch((err) => console.warn("Failed to load farm details", err))
+        .finally(() => setLoadingFarm(false));
+    } else {
+      setFarmInfo(null);
+    }
+  }, [user?.farm_id, API_BASE]);
 
   const fetchLiveScans = async () => {
     setLoadingScans(true);
@@ -190,11 +216,15 @@ export default function MinimalFarmerDashboard() {
             const sev: "Critical" | "Warning" | "Healthy" =
               isHealthy ? "Healthy" : (item.severity_level === "Critical" || item.severity_level === "Severe") ? "Critical" : "Warning";
 
+            const isUserFarm = Boolean(user?.farm_id && item.device_id === user.farm_id);
+
             return {
               id: item.scan_uuid || `scan-${item.id || idx}`,
               sampleId: `PLOT-${item.device_id ? `DEV0${item.device_id}` : "ZHB"}-${item.id || idx}`,
               crop: (item.crop_type as any) || "Tomato",
-              plotZone: `Sector ${item.device_id || 7} (${Number(item.latitude || 42.9).toFixed(2)}° N, ${Number(item.longitude || 71.37).toFixed(2)}° E)`,
+              plotZone: isUserFarm
+                ? `Ваше поле: Сектор ${item.device_id}`
+                : `Sector ${item.device_id || 7} (${Number(item.latitude || 42.9).toFixed(2)}° N, ${Number(item.longitude || 71.37).toFixed(2)}° E)`,
               diagnosis: rawDisease,
               severity: sev,
               prescribedTreatment: treatment,
@@ -202,7 +232,9 @@ export default function MinimalFarmerDashboard() {
               phiDays: phi,
               treated: isHealthy || idx % 2 === 1,
               leafImage: leafImg,
-              farmerNote: `Live scan synced from mobile handset (${((item.confidence_score || 0.95) * 100).toFixed(1)}% confidence). Synced: ${item.captured_at ? new Date(item.captured_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Recently"}`,
+              farmerNote: `${isUserFarm ? "★ Ваша ферма: " : ""}Зафиксировано в облаке (${((item.confidence_score || 0.95) * 100).toFixed(1)}% точность). Время: ${item.captured_at ? new Date(item.captured_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Недавно"}`,
+              deviceId: item.device_id,
+              isMyFarm: isUserFarm,
             };
           });
 
@@ -238,6 +270,9 @@ export default function MinimalFarmerDashboard() {
   // Filtered Records
   const filteredRecords = useMemo(() => {
     return records.filter((r) => {
+      if (onlyMyFarm && user?.farm_id && r.deviceId !== user.farm_id) {
+        return false;
+      }
       const matchSearch =
         r.plotZone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -255,7 +290,7 @@ export default function MinimalFarmerDashboard() {
       }
       return matchSearch;
     });
-  }, [records, searchQuery, filterStatus]);
+  }, [records, searchQuery, filterStatus, onlyMyFarm, user?.farm_id]);
 
   // Toggle Action Status
   const toggleTreated = (id: string, e?: React.MouseEvent) => {
@@ -354,10 +389,10 @@ export default function MinimalFarmerDashboard() {
             <span className="text-lg">🌱</span>
             <div className="truncate">
               <span className="font-semibold text-[13px] text-[#37352f] dark:text-[#e3e2e0] block truncate">
-                AgriShadeNet
+                {user ? (farmInfo?.farm_name || `Ферма #${user.farm_id}`) : "AgriShadeNet"}
               </span>
-              <span className="text-[11px] text-[#787774] dark:text-[#9b9b9b] block">
-                Zhambyl Field Plots
+              <span className="text-[11px] text-[#787774] dark:text-[#9b9b9b] block truncate">
+                {user ? `${farmInfo?.region || "Казахстан"} • ${farmInfo?.total_hectares || 10} га` : "Гостевой режим (Демо)"}
               </span>
             </div>
           </div>
@@ -402,20 +437,102 @@ export default function MinimalFarmerDashboard() {
           </div>
         </div>
 
-        {/* Sidebar Footer */}
+        {/* Sidebar Footer: Account Status & Actions */}
         <div className="p-3 border-t border-[#e9e9e7] dark:border-[#2f2f2f] space-y-2 text-[12px]">
           <Link
             href="/"
             className="flex items-center gap-2 text-[#5a5855] dark:text-[#9b9b9b] hover:text-[#002e23] dark:hover:text-emerald-400 py-1 transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>← Return to Landing Page</span>
+            <span>← На главную страницу</span>
           </Link>
 
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[#787774] truncate">
-              {user?.full_name || "Azat Madiyev"} (Agronomist)
-            </span>
+          {user ? (
+            <div className="p-2 rounded-lg bg-[#f0f0ee] dark:bg-[#282828] space-y-1.5">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[11px] shrink-0">
+                  {user.full_name?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <div className="truncate flex-1">
+                  <div className="font-semibold text-[12px] text-[#37352f] dark:text-[#e3e2e0] truncate">
+                    {user.full_name}
+                  </div>
+                  <div className="text-[10px] text-[#787774] dark:text-[#9b9b9b] truncate">
+                    @{user.username} • {user.role === "farm_owner" ? "Владелец" : "Агроном"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-1.5 flex items-center justify-between border-t border-[#e2e2df] dark:border-[#383838]">
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium truncate max-w-[110px]">
+                  {farmInfo?.farm_name ? farmInfo.farm_name.split(" ")[0] : `Ферма #${user.farm_id}`}
+                </span>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="inline-flex items-center gap-1 text-[11px] text-rose-600 dark:text-rose-400 hover:underline"
+                >
+                  <LogOut className="w-3 h-3" />
+                  <span>Выйти</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-2 rounded-lg bg-[#f0f0ee] dark:bg-[#282828] space-y-2">
+              <div className="flex items-center justify-between text-[11px] text-[#787774] dark:text-[#9b9b9b]">
+                <span>Гостевой режим</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                  Демо
+                </span>
+              </div>
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("login")}
+                  className="flex-1 py-1 px-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-medium transition-colors text-center"
+                >
+                  Войти
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("register")}
+                  className="flex-1 py-1 px-2 rounded bg-[#e3e2e0] dark:bg-[#383838] hover:bg-[#d8d7d5] text-[#37352f] dark:text-[#e3e2e0] text-[11px] font-medium transition-colors text-center"
+                >
+                  Регистрация
+                </button>
+              </div>
+
+              {/* 1-Click Demo Accounts */}
+              <div className="pt-1.5 border-t border-[#e2e2df] dark:border-[#383838] space-y-1">
+                <div className="text-[10px] text-[#9b9a97]">Быстрый демо-вход:</div>
+                <div className="flex flex-col gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => login("azat_lead", "Password123!")}
+                    className="text-left text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline truncate"
+                  >
+                    • Азат М. (Taraz Orchards)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => login("nurlan_agro", "AgroPass2026!")}
+                    className="text-left text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline truncate"
+                  >
+                    • Нурлан А. (Baiterek Agro)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => login("aigerim_plant", "Zhetysu2026!")}
+                    className="text-left text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline truncate"
+                  >
+                    • Айгерим С. (Zhetysu)
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end pt-0.5">
             <button
               type="button"
               onClick={() => setSidebarOpen(false)}
@@ -462,8 +579,36 @@ export default function MinimalFarmerDashboard() {
             </span>
           </div>
 
-          {/* Theme & Status */}
+          {/* Theme & Status & User Profile */}
           <div className="flex items-center gap-2 text-[12px]">
+            {user ? (
+              <div className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#efedea] dark:bg-[#282828] text-[12px] text-[#37352f] dark:text-[#e3e2e0]">
+                <User className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-semibold">{user.full_name}</span>
+                {farmInfo?.farm_name && (
+                  <span className="text-[#787774] text-[11px] truncate max-w-[140px]">
+                    ({farmInfo.farm_name.split(" ")[0]})
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="ml-1 text-[11px] text-rose-600 hover:underline"
+                >
+                  Выйти
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
+                className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-[4px] bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-[11px] transition-colors"
+              >
+                <LogIn className="w-3 h-3" />
+                <span>Войти</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={fetchLiveScans}
@@ -471,7 +616,7 @@ export default function MinimalFarmerDashboard() {
               title="Click to refresh live scans from cloud"
             >
               <span className={`w-1.5 h-1.5 rounded-full ${loadingScans ? "bg-amber-500 animate-ping" : "bg-emerald-500"}`} />
-              <span>Cloud Connected ({records.length} scans)</span>
+              <span>Облако ({records.length} сканов)</span>
               <RefreshCw className={`w-3 h-3 ${loadingScans ? "animate-spin" : ""}`} />
             </button>
 
@@ -651,6 +796,24 @@ export default function MinimalFarmerDashboard() {
               >
                 Treated ({records.filter((r) => r.treated && r.severity !== "Healthy").length})
               </button>
+
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => setOnlyMyFarm(!onlyMyFarm)}
+                  className={`px-2 py-1 rounded-[4px] font-medium transition-colors inline-flex items-center gap-1 ${
+                    onlyMyFarm
+                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 ring-1 ring-emerald-500 font-semibold"
+                      : "text-[#787774] hover:text-[#37352f]"
+                  }`}
+                  title="Показать только участки моей фермы"
+                >
+                  <Building className="w-3 h-3 text-emerald-600" />
+                  <span>
+                    Моя ферма ({records.filter((r) => r.deviceId === user.farm_id).length})
+                  </span>
+                </button>
+              )}
             </div>
 
             {/* Right: Search & New Scan */}
@@ -721,9 +884,16 @@ export default function MinimalFarmerDashboard() {
                             : "🍇"}
                         </span>
                         <div>
-                          <span className="font-semibold text-[#37352f] dark:text-white block leading-tight">
-                            {r.plotZone}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-[#37352f] dark:text-white block leading-tight">
+                              {r.plotZone}
+                            </span>
+                            {user && r.deviceId === user.farm_id && (
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                                Ваша ферма
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[11px] text-[#787774]">
                             {r.crop} • {r.sampleId}
                           </span>
