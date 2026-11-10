@@ -20,6 +20,8 @@
 		110011 /* Cell6DiagnosticDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210012 /* Cell6DiagnosticDashboard.swift */; };
 		110012 /* FoliarValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210013 /* FoliarValidator.swift */; };
 		110013 /* AgriShadeNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210014 /* AgriShadeNet.swift */; };
+		110014 /* CloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210015 /* CloudSyncService.swift */; };
+		110015 /* CloudSyncSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210016 /* CloudSyncSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		210012 /* Cell6DiagnosticDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell6DiagnosticDashboard.swift; sourceTree = "<group>"; };
 		210013 /* FoliarValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoliarValidator.swift; sourceTree = "<group>"; };
 		210014 /* AgriShadeNet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgriShadeNet.swift; sourceTree = "<group>"; };
+		210015 /* CloudSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncService.swift; sourceTree = "<group>"; };
+		210016 /* CloudSyncSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +102,7 @@
 				210005 /* ImagePickerSheet.swift */,
 				210006 /* DiagnosticReportCard.swift */,
 				210012 /* Cell6DiagnosticDashboard.swift */,
+				210016 /* CloudSyncSheet.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -108,6 +113,7 @@
 				210004 /* FoliarDiagnosticService.swift */,
 				210011 /* Cell6DiagnosticPipeline.swift */,
 				210013 /* FoliarValidator.swift */,
+				210015 /* CloudSyncService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -193,6 +199,8 @@
 				110011 /* Cell6DiagnosticDashboard.swift in Sources */,
 				110012 /* FoliarValidator.swift in Sources */,
 				110013 /* AgriShadeNet.swift in Sources */,
+				110014 /* CloudSyncService.swift in Sources */,
+				110015 /* CloudSyncSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

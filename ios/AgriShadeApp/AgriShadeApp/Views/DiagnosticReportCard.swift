@@ -2,7 +2,9 @@ import SwiftUI
 
 public struct DiagnosticReportCard: View {
     public let report: PathologyReport
+    @ObservedObject private var syncService: CloudSyncService = .shared
     @State private var showFullAdvisory: Bool = true
+    @State private var showSyncSheet: Bool = false
 
     public var body: some View {
         VStack(spacing: 16) {
@@ -263,12 +265,36 @@ public struct DiagnosticReportCard: View {
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(12)
+
+                // Simple Cloud Backup Indicator
+                HStack {
+                    Image(systemName: syncService.isLoggedIn ? "checkmark.icloud.fill" : "icloud")
+                        .foregroundColor(syncService.isLoggedIn ? .green : .secondary)
+                    Text(syncService.isLoggedIn ? "Сохранено в вашем облачном аккаунте" : "Сохранено на телефоне")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if !syncService.isLoggedIn {
+                        Button("Включить облако") {
+                            showSyncSheet = true
+                        }
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.blue)
+                    }
+                }
+                .padding(10)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
             }
         }
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+        .sheet(isPresented: $showSyncSheet) {
+            CloudSyncSheet(syncService: syncService)
+        }
     }
 
     private var confidenceColor: Color {

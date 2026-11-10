@@ -216,6 +216,11 @@ public final class FoliarDiagnosticService: ObservableObject {
                 isGated: isGated
             )
 
+            // Automatically buffer valid agricultural foliar scans for cloud telemetry sync
+            if !isNonLeaf && !isUnsupportedSpecies, let finalReport = self.currentReport {
+                CloudSyncService.shared.enqueue(report: finalReport, image: fixedImg)
+            }
+
         } catch {
             self.errorMessage = "Diagnostic inference failed: \(error.localizedDescription)"
         }

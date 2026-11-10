@@ -40,15 +40,53 @@ def generate_secure_token() -> str:
 def verify_edge_device_auth(
     x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
     x_device_serial: Optional[str] = Header(None, alias="X-Device-Serial"),
+    authorization: Optional[str] = Header(None, alias="Authorization"),
     db: Session = Depends(get_db)
 ) -> Device:
     """
-    FastAPI security dependency that authenticates edge requests:
-    1. Checks for presence of X-API-Key and X-Device-Serial headers.
-    2. Hashes incoming key with SHA-256.
-    3. Looks up the device and performs constant-time comparison against stored hash.
-    4. Enforces active device status.
+    FastAPI security dependency that authenticates edge or mobile requests:
+    1. If a valid User Bearer token is provided, binds the session to the user's mobile device.
+    2. Otherwise checks for presence of X-API-Key and X-Device-Serial edge headers.
+    3. Hashes incoming key with SHA-256 and validates against registered devices.
     """
+    # Path A: Authenticated Mobile User via Cloud Bearer Token
+    if authorization and "Bearer " in authorization:
+        token = authorization.split("Bearer ")[-1].strip()
+        user = db.query(User).filter(User.api_token == token).first()
+        if user and user.is_active:
+            serial = x_device_serial or f"AGRI-USER-{user.id}"
+            device = db.query(Device).filter(Device.device_serial == serial).first()
+            if not device:
+                from .models import Farm
+                default_farm = db.query(Farm).first()
+                farm_id = user.farm_id or (default_farm.id if default_farm else None)
+                if not farm_id and default_farm is None:
+                    # Create default pilot farm if none exists
+                    farm = Farm(
+                        farm_name="AgriShade Pilot Plots",
+                        owner_name=user.full_name,
+                        region="Zhambyl",
+                        total_hectares=50.0
+                    )
+                    db.add(farm)
+                    db.commit()
+                    db.refresh(farm)
+                    farm_id = farm.id
+
+                device = Device(
+                    device_serial=serial,
+                    farm_id=farm_id or 1,
+                    hardware_model="Mobile iOS App",
+                    firmware_version="v2.5.0",
+                    api_key_hash=hash_token(x_api_key or "mobile_user_key"),
+                    is_active=True,
+                )
+                db.add(device)
+                db.commit()
+                db.refresh(device)
+            return device
+
+    # Path B: Standalone Edge Device with Hardware API Key
     if not x_api_key or not x_device_serial:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
