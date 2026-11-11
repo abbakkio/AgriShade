@@ -286,6 +286,19 @@ def get_scans(
     return query.order_by(DiagnosticScan.captured_at.desc()).limit(limit).all()
 
 
+@app.delete("/api/v1/scans", tags=["Analytics & Queries"])
+def clear_all_scans(db: Session = Depends(get_db)):
+    """Purges all demo/synthetic scans from database so only fresh mobile scans are present."""
+    deleted_count = db.query(DiagnosticScan).delete()
+    db.commit()
+    return {
+        "status": "success",
+        "message": f"Successfully cleared {deleted_count} scans from database.",
+        "deleted_count": deleted_count,
+        "remaining_scans": db.query(DiagnosticScan).count(),
+    }
+
+
 # =============================================================================
 # 4. RELATIONAL JOIN & AGGREGATION (TASK 3: RELATIONAL JOIN)
 # =============================================================================
