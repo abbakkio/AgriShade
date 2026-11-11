@@ -559,12 +559,12 @@ public final class CloudSyncService: ObservableObject {
     public func login(username: String, password: String) async -> (success: Bool, message: String) {
         let cleanURL = backendURL.trimmingCharacters(in: CharacterSet(charactersIn: "/ "))
         guard let url = URL(string: "\(cleanURL)/api/v1/auth/login") else {
-            return (false, "Неверный адрес сервера")
+            return (false, "Invalid server URL")
         }
 
         let body: [String: Any] = ["username": username.trimmingCharacters(in: .whitespacesAndNewlines), "password": password]
         guard let httpBody = try? JSONSerialization.data(withJSONObject: body) else {
-            return (false, "Ошибка создания запроса")
+            return (false, "Failed to create request")
         }
 
         var req = URLRequest(url: url)
@@ -576,7 +576,7 @@ public final class CloudSyncService: ObservableObject {
         do {
             let (data, resp) = try await URLSession.shared.data(for: req)
             guard let httpResp = resp as? HTTPURLResponse else {
-                return (false, "Сервер не отвечает")
+                return (false, "Server is not responding")
             }
 
             if httpResp.statusCode == 200 {
@@ -592,7 +592,7 @@ public final class CloudSyncService: ObservableObject {
                     Task {
                         await syncPendingScans()
                     }
-                    return (true, "Добро пожаловать, \(loginResp.user.fullName)!")
+                    return (true, "Welcome, \(loginResp.user.fullName)!")
                 }
             }
 
@@ -600,20 +600,20 @@ public final class CloudSyncService: ObservableObject {
             if let errJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let detail = errJson["detail"] as? String {
                 if detail.lowercased().contains("invalid") {
-                    return (false, "Неверный логин или пароль")
+                    return (false, "Invalid username or password")
                 }
                 return (false, detail)
             }
-            return (false, "Ошибка входа (код \(httpResp.statusCode))")
+            return (false, "Login failed (code \(httpResp.statusCode))")
         } catch {
-            return (false, "Не удалось подключиться к серверу. Проверьте интернет.")
+            return (false, "Could not connect to server. Please check your internet connection.")
         }
     }
 
     public func register(username: String, email: String, password: String, fullName: String) async -> (success: Bool, message: String) {
         let cleanURL = backendURL.trimmingCharacters(in: CharacterSet(charactersIn: "/ "))
         guard let url = URL(string: "\(cleanURL)/api/v1/auth/register") else {
-            return (false, "Неверный адрес сервера")
+            return (false, "Invalid server URL")
         }
 
         let cleanUsername = username.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -621,10 +621,10 @@ public final class CloudSyncService: ObservableObject {
         let cleanName = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard cleanUsername.count >= 3 else {
-            return (false, "Логин должен быть не короче 3 символов")
+            return (false, "Username must be at least 3 characters")
         }
         guard password.count >= 6 else {
-            return (false, "Пароль должен быть не короче 6 символов")
+            return (false, "Password must be at least 6 characters")
         }
 
         let body: [String: Any] = [
@@ -636,7 +636,7 @@ public final class CloudSyncService: ObservableObject {
         ]
 
         guard let httpBody = try? JSONSerialization.data(withJSONObject: body) else {
-            return (false, "Ошибка формирования данных")
+            return (false, "Failed to format request data")
         }
 
         var req = URLRequest(url: url)
@@ -648,7 +648,7 @@ public final class CloudSyncService: ObservableObject {
         do {
             let (data, resp) = try await URLSession.shared.data(for: req)
             guard let httpResp = resp as? HTTPURLResponse else {
-                return (false, "Сервер не отвечает")
+                return (false, "Server is not responding")
             }
 
             if httpResp.statusCode == 201 || httpResp.statusCode == 200 {
@@ -659,13 +659,13 @@ public final class CloudSyncService: ObservableObject {
             if let errJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let detail = errJson["detail"] as? String {
                 if detail.contains("already exists") {
-                    return (false, "Пользователь с таким логином уже существует")
+                    return (false, "A user with this username already exists")
                 }
                 return (false, detail)
             }
-            return (false, "Не удалось создать аккаунт (код \(httpResp.statusCode))")
+            return (false, "Failed to create account (code \(httpResp.statusCode))")
         } catch {
-            return (false, "Не удалось подключиться к серверу. Проверьте интернет.")
+            return (false, "Could not connect to server. Please check your internet connection.")
         }
     }
 

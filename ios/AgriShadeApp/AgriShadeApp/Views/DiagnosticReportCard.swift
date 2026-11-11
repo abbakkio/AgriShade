@@ -270,12 +270,12 @@ public struct DiagnosticReportCard: View {
                 HStack {
                     Image(systemName: syncService.isLoggedIn ? "checkmark.icloud.fill" : "icloud")
                         .foregroundColor(syncService.isLoggedIn ? .green : .secondary)
-                    Text(syncService.isLoggedIn ? "Сохранено в вашем облачном аккаунте" : "Сохранено на телефоне")
+                    Text(syncService.isLoggedIn ? "Saved to your cloud account" : "Saved on device")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
                     if !syncService.isLoggedIn {
-                        Button("Включить облако") {
+                        Button("Enable Cloud") {
                             showSyncSheet = true
                         }
                         .font(.caption2)

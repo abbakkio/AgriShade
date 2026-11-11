@@ -26,12 +26,12 @@ public struct ContentView: View {
                                     .foregroundColor(.green)
 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Облако: \(syncService.currentUser?.fullName ?? "Подключено")")
+                                    Text("Cloud: \(syncService.currentUser?.fullName ?? "Connected")")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
 
-                                    Text(syncService.pendingCount > 0 ? "\(syncService.pendingCount) сканов ожидает отправки" : "Все результаты сохранены в облаке")
+                                    Text(syncService.pendingCount > 0 ? "\(syncService.pendingCount) scan(s) pending upload" : "All results saved to cloud")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -41,12 +41,12 @@ public struct ContentView: View {
                                     .foregroundColor(.blue)
 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Локальный режим")
+                                    Text("Offline Mode")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
 
-                                    Text("Данные на телефоне. Нажмите для входа в облако.")
+                                    Text("Data saved on device. Tap to sign in to cloud.")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -55,7 +55,7 @@ public struct ContentView: View {
                             Spacer()
 
                             if syncService.isLoggedIn && syncService.pendingCount > 0 {
-                                Text("Синхронизировать")
+                                Text("Sync Now")
                                     .font(.caption2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
@@ -111,11 +111,11 @@ public struct ContentView: View {
                                         .font(.system(size: 56))
                                         .foregroundColor(.green)
 
-                                    Text("Проверка здоровья листа")
+                                    Text("Foliar Disease Diagnostic")
                                         .font(.headline)
                                         .foregroundColor(.primary)
 
-                                    Text("Сфотографируйте лист растения, чтобы мгновенно определить болезнь и получить рекомендации по лечению.")
+                                    Text("Take a photo of a crop leaf to instantly identify foliar pathology and view calibrated chemical treatment protocols.")
                                         .font(.caption)
                                         .multilineTextAlignment(.center)
                                         .foregroundColor(.secondary)
@@ -132,7 +132,7 @@ public struct ContentView: View {
                                         ProgressView()
                                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                             .scaleEffect(1.4)
-                                        Text("Определение диагноза...")
+                                        Text("Running diagnostic model...")
                                             .font(.subheadline)
                                             .foregroundColor(.white)
                                     }
@@ -147,7 +147,7 @@ public struct ContentView: View {
                         Button {
                             activePicker = .camera
                         } label: {
-                            Label("Сделать фото", systemImage: "camera.fill")
+                            Label("Take Photo", systemImage: "camera.fill")
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -159,7 +159,7 @@ public struct ContentView: View {
                         Button {
                             activePicker = .photoLibrary
                         } label: {
-                            Label("Из галереи", systemImage: "photo.on.rectangle.angled")
+                            Label("From Gallery", systemImage: "photo.on.rectangle.angled")
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -197,7 +197,7 @@ public struct ContentView: View {
                     // =========================================================
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
-                            Text("История проверок")
+                            Text("Scan History")
                                 .font(.headline)
                                 .foregroundColor(.primary)
 
@@ -207,7 +207,7 @@ public struct ContentView: View {
                                 Button {
                                     syncService.addDemoScan()
                                 } label: {
-                                    Label("Пример листа", systemImage: "plus.circle")
+                                    Label("Sample Leaf", systemImage: "plus.circle")
                                         .font(.caption)
                                         .fontWeight(.semibold)
                                 }
@@ -215,7 +215,7 @@ public struct ContentView: View {
                         }
 
                         if syncService.bufferedScans.isEmpty {
-                            Text("История пуста. Сделайте фото или выберите лист из галереи выше.")
+                            Text("No scan history yet. Take a photo or select a leaf from the gallery above.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .padding(.vertical, 8)
@@ -258,7 +258,7 @@ public struct ContentView: View {
 
                                         Spacer()
 
-                                        Text(scan.synced ? "В облаке" : "На телефоне")
+                                        Text(scan.synced ? "In Cloud" : "On Device")
                                             .font(.caption2)
                                             .fontWeight(.medium)
                                             .foregroundColor(scan.synced ? .green : .secondary)
@@ -272,7 +272,7 @@ public struct ContentView: View {
                                     Button {
                                         showSyncSheet = true
                                     } label: {
-                                        Text("Показать все (\(syncService.bufferedScans.count)) →")
+                                        Text("Show All (\(syncService.bufferedScans.count)) →")
                                             .font(.caption)
                                             .foregroundColor(.blue)
                                             .frame(maxWidth: .infinity, alignment: .center)
@@ -292,7 +292,7 @@ public struct ContentView: View {
                 // Clear button on trailing if photo analyzed
                 ToolbarItem(placement: .navigationBarLeading) {
                     if selectedImage != nil || diagnosticService.cell6Output != nil {
-                        Button("Очистить") {
+                        Button("Clear") {
                             selectedImage = nil
                             diagnosticService.currentReport = nil
                             diagnosticService.cell6Output = nil
@@ -317,7 +317,7 @@ public struct ContentView: View {
                         } else {
                             HStack(spacing: 4) {
                                 Image(systemName: "person.circle")
-                                Text("Войти")
+                                Text("Log In")
                                     .font(.subheadline)
                             }
                         }
@@ -347,11 +347,11 @@ public struct ContentView: View {
 
     private func friendlySeverity(_ severity: String) -> String {
         switch severity.lowercased() {
-        case "healthy": return "В норме"
-        case "critical": return "Опасно"
-        case "severe": return "Высокий риск"
-        case "moderate": return "Средний"
-        default: return "Низкий"
+        case "healthy": return "Healthy"
+        case "critical": return "Critical"
+        case "severe": return "High Risk"
+        case "moderate": return "Moderate"
+        default: return "Low Risk"
         }
     }
 

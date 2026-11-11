@@ -18,8 +18,8 @@ public struct CloudSyncSheet: View {
     @State private var showDevSettings: Bool = false
 
     public enum AuthMode: String, CaseIterable, Identifiable {
-        case login = "Вход"
-        case register = "Регистрация"
+        case login = "Log In"
+        case register = "Sign Up"
         public var id: String { rawValue }
     }
 
@@ -60,7 +60,7 @@ public struct CloudSyncSheet: View {
                                     Circle()
                                         .fill(Color.green)
                                         .frame(width: 8, height: 8)
-                                    Text("Облако подключено")
+                                    Text("Cloud Connected")
                                         .font(.caption)
                                         .fontWeight(.medium)
                                         .foregroundColor(.green)
@@ -73,16 +73,16 @@ public struct CloudSyncSheet: View {
                             // Sync Status Card
                             HStack(spacing: 14) {
                                 StatusStatBox(
-                                    title: "На телефоне",
+                                    title: "On Device",
                                     value: "\(syncService.pendingCount)",
-                                    subtitle: syncService.pendingCount > 0 ? "Ожидают отправки" : "Всё сохранено",
+                                    subtitle: syncService.pendingCount > 0 ? "Pending Upload" : "All Synced",
                                     color: syncService.pendingCount > 0 ? .orange : .secondary
                                 )
 
                                 StatusStatBox(
-                                    title: "В облаке",
+                                    title: "In Cloud",
                                     value: "\(syncService.syncedCount)",
-                                    subtitle: "Сохранено надежно",
+                                    subtitle: "Securely Synced",
                                     color: .green
                                 )
                             }
@@ -99,11 +99,11 @@ public struct CloudSyncSheet: View {
                                         ProgressView()
                                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                             .padding(.trailing, 6)
-                                        Text("Сохранение в облако...")
+                                        Text("Syncing to Cloud...")
                                             .font(.headline)
                                     } else {
                                         Image(systemName: syncService.pendingCount > 0 ? "arrow.triangle.2.circlepath" : "checkmark.circle.fill")
-                                        Text(syncService.pendingCount > 0 ? "Синхронизировать (\(syncService.pendingCount))" : "Все данные сохранены")
+                                        Text(syncService.pendingCount > 0 ? "Sync Now (\(syncService.pendingCount))" : "All Data Synced")
                                             .font(.headline)
                                     }
                                     Spacer()
@@ -141,7 +141,7 @@ public struct CloudSyncSheet: View {
                             Button(role: .destructive) {
                                 syncService.logout()
                             } label: {
-                                Text("Выйти из аккаунта")
+                                Text("Sign Out")
                                     .font(.subheadline)
                                     .foregroundColor(.red)
                                     .padding(.top, 6)
@@ -167,20 +167,20 @@ public struct CloudSyncSheet: View {
                             }
 
                             VStack(spacing: 6) {
-                                Text("Резервное копирование")
+                                Text("Cloud Backup & Sync")
                                     .font(.title3)
                                     .fontWeight(.bold)
                                     .foregroundColor(.primary)
 
-                                Text("Войдите в аккаунт, чтобы сохранять снимки и историю проверок поля в защищенном облаке.")
+                                Text("Sign in to securely backup crop photos and field inspection history in the cloud.")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, 10)
                             }
 
-                            // Segmented Switcher (Вход / Регистрация)
-                            Picker("Режим", selection: $authMode) {
+                            // Segmented Switcher (Log In / Sign Up)
+                            Picker("Mode", selection: $authMode) {
                                 ForEach(AuthMode.allCases) { mode in
                                     Text(mode.rawValue).tag(mode)
                                 }
@@ -191,13 +191,13 @@ public struct CloudSyncSheet: View {
                             // Form Fields
                             VStack(spacing: 12) {
                                 if authMode == .register {
-                                    TextField("Ваше имя (ФИО)", text: $fullNameInput)
+                                    TextField("Full Name", text: $fullNameInput)
                                         .textContentType(.name)
                                         .padding(12)
                                         .background(Color(.systemBackground))
                                         .cornerRadius(10)
 
-                                    TextField("Электронная почта", text: $emailInput)
+                                    TextField("Email Address", text: $emailInput)
                                         .textContentType(.emailAddress)
                                         .keyboardType(.emailAddress)
                                         .autocorrectionDisabled()
@@ -207,7 +207,7 @@ public struct CloudSyncSheet: View {
                                         .cornerRadius(10)
                                 }
 
-                                TextField("Логин (имя пользователя)", text: $usernameInput)
+                                TextField("Username", text: $usernameInput)
                                     .textContentType(.username)
                                     .autocorrectionDisabled()
                                     .textInputAutocapitalization(.never)
@@ -215,7 +215,7 @@ public struct CloudSyncSheet: View {
                                     .background(Color(.systemBackground))
                                     .cornerRadius(10)
 
-                                SecureField("Пароль", text: $passwordInput)
+                                SecureField("Password", text: $passwordInput)
                                     .textContentType(authMode == .login ? .password : .newPassword)
                                     .padding(12)
                                     .background(Color(.systemBackground))
@@ -242,7 +242,7 @@ public struct CloudSyncSheet: View {
                                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                             .padding(.trailing, 6)
                                     }
-                                    Text(authMode == .login ? "Войти в аккаунт" : "Зарегистрироваться")
+                                    Text(authMode == .login ? "Log In" : "Create Account")
                                         .font(.headline)
                                         .fontWeight(.semibold)
                                     Spacer()
@@ -259,7 +259,7 @@ public struct CloudSyncSheet: View {
                                 Image(systemName: "checkmark.shield.fill")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                Text("Вход необязателен. Все функции камеры и распознавания болезней работают автономно без интернета и регистрации.")
+                                Text("Sign-in is optional. Real-time camera inference and disease detection run 100% on-device without internet or registration.")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                                     .lineLimit(3)
@@ -276,12 +276,12 @@ public struct CloudSyncSheet: View {
                     // =========================================================
                     DisclosureGroup(isExpanded: $showDevSettings) {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Сервер: \(syncService.backendURL)")
+                            Text("Server: \(syncService.backendURL)")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
 
                             HStack(spacing: 8) {
-                                Button("Render Облако") {
+                                Button("Render Cloud") {
                                     syncService.backendURL = "https://agrishade.onrender.com"
                                 }
                                 .font(.caption2)
@@ -294,12 +294,12 @@ public struct CloudSyncSheet: View {
                                 .buttonStyle(.bordered)
                             }
 
-                            Text("Устройство: \(syncService.deviceSerial)")
+                            Text("Device: \(syncService.deviceSerial)")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
 
                             HStack {
-                                Button("Сбросить к стандарту") {
+                                Button("Reset to Defaults") {
                                     syncService.resetToDefaults()
                                 }
                                 .font(.caption2)
@@ -307,7 +307,7 @@ public struct CloudSyncSheet: View {
 
                                 Spacer()
 
-                                Button("Очистить сканы") {
+                                Button("Clear Synced Scans") {
                                     syncService.clearSynced()
                                 }
                                 .font(.caption2)
@@ -316,18 +316,18 @@ public struct CloudSyncSheet: View {
                         }
                         .padding(.top, 6)
                     } label: {
-                        Text("Служебная информация")
+                        Text("Developer Settings")
                             .font(.caption2)
                             .foregroundColor(.secondary.opacity(0.6))
                     }
                 }
                 .padding()
             }
-            .navigationTitle("Облако и профиль")
+            .navigationTitle("Cloud & Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Готово") {
+                    Button("Done") {
                         dismiss()
                     }
                     .font(.body)
