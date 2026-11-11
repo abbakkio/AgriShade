@@ -122,7 +122,7 @@ export default function AuthModal() {
             AgriShadeNet Portal
           </h2>
           <p className="text-xs text-muted-forest mt-1">
-            Secure edge telemetry ingestion & farm identity management
+            Secure edge telemetry ingestion & agronomist identity management
           </p>
         </div>
 
@@ -279,30 +279,18 @@ export default function AuthModal() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="flex flex-col gap-1 text-left">
-                <label className="text-xs font-semibold text-charcoal">Role</label>
-                <select
-                  value={regRole}
-                  onChange={(e) => setRegRole(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-border-card text-sm bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pine-900/20 focus:border-pine-900 transition-all text-charcoal"
-                >
-                  <option value="agronomist">Lead Agronomist</option>
-                  <option value="farmer">Smallholder Farmer</option>
-                  <option value="admin">Agribusiness Admin</option>
-                  <option value="researcher">Researcher</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1 text-left">
-                <label className="text-xs font-semibold text-charcoal">Farm ID</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={regFarmId}
-                  onChange={(e) => setRegFarmId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-border-card text-sm bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pine-900/20 focus:border-pine-900 transition-all text-charcoal"
-                />
-              </div>
+            <div className="flex flex-col gap-1 text-left">
+              <label className="text-xs font-semibold text-charcoal">Role</label>
+              <select
+                value={regRole}
+                onChange={(e) => setRegRole(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-border-card text-sm bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-pine-900/20 focus:border-pine-900 transition-all text-charcoal"
+              >
+                <option value="agronomist">Lead Agronomist</option>
+                <option value="farmer">Specialist</option>
+                <option value="admin">Agribusiness Admin</option>
+                <option value="researcher">Researcher</option>
+              </select>
             </div>
 
             <div className="flex flex-col gap-1 text-left">
